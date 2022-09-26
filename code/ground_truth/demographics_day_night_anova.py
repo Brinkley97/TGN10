@@ -1,11 +1,14 @@
-from util.load_data_basic import *
+# from util.load_data_basic import *
 from scipy import stats
 from scipy.stats import skew
 import pingouin as pg
 from statsmodels.formula.api import ols
 import statsmodels.api as sm
-
-sys.path.insert(1, '/Users/brinkley97/Documents/development/lab-information_sciences_institute/tiles-day-night/code/util')
+import sys, os
+sys.path.insert(1, '/Users/brinkley97/Documents/development/lab-kcad/tiles-day-night/code/util/')
+from load_data_basic import read_AllBasic, return_nurse_df
+from pathlib import Path
+import pandas as pd
 
 col_dict = {'stai': 'Anxiety', 'pan_PosAffect': 'Positive Affect', 'pan_NegAffect': 'Negative Affect',
             'rand_GeneralHealth': 'General Health', 'rand_EnergyFatigue': 'Energy',
@@ -45,18 +48,18 @@ if __name__ == '__main__':
     root_data_path = Path(__file__).parent.absolute().parents[2].joinpath('datasets', bucket_str)
     
     # please contact the author to access: igtb_day_night.csv.gz
-    # igtb_day_night_file = 'igtb_day_night.csv.gz'
-    # path_to_file = '/Users/brinkley97/Documents/development/lab-information_sciences_institute/datasets/tiles_dataset/surveys/raw/IGTB/USC_PILOT_IGTB.csv'
-    # if Path(os.path.realpath(__file__)).parents[2].joinpath(path_to_file).exists() == False:
-    #     igtb_df = read_AllBasic(root_data_path)
-    #     igtb_df.to_csv(Path(os.path.realpath(__file__)).parents[2].joinpath('datasets', bucket_str, 'raw', 'demographics', igtb_day_night_file))
-    # igtb_df = pd.read_csv(Path(os.path.realpath(__file__)).parents[2].joinpath('datasets', bucket_str, 'raw', 'demographics', igtb_day_night_file), index_col=0)
+    igtb_day_night_file = 'igtb_day_night.csv.gz'
+    path_to_file = '/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/surveys/raw/IGTB/USC_PILOT_IGTB.csv'
+    if Path(os.path.realpath(__file__)).parents[2].joinpath(path_to_file).exists() == False:
+        igtb_df = read_AllBasic(root_data_path)
+        igtb_df.to_csv('/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/table_1/anova/igtb_day_night.csv.gz')
+    igtb_df = pd.read_csv('/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/table_1/anova/igtb_day_night.csv.gz', index_col=0)
 
     # please contact the author to access: igtb_day_night.csv.gz
-    if Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz').exists() == False:
-        igtb_df = read_AllBasic(root_data_path)
-        igtb_df.to_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'))
-    igtb_df = pd.read_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'), index_col=0)
+    # if Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz').exists() == False:
+    #     igtb_df = read_AllBasic(root_data_path)
+    #     igtb_df.to_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'))
+    # igtb_df = pd.read_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'), index_col=0)
 
     for participant_id in list(igtb_df.participant_id):
         nurse = str(igtb_df.loc[igtb_df['participant_id'] == participant_id].currentposition[0])
@@ -91,7 +94,7 @@ if __name__ == '__main__':
     # shift_pre-study
     nurse_df = igtb_df.loc[igtb_df['job'] == 'nurse']
     print('Total number of participants: %d' % (len(nurse_df)))
-    %store nurse_df
+    # store nurse_df
 
     print()
     day_df = nurse_df.loc[nurse_df['Shift'] == 'Day shift']
