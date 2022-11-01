@@ -1,11 +1,14 @@
-# TGN10+ (GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
+# TGN10+ 
+GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
 
-## This is a repo for reproducing day and night shift comparison using TILES data-set
-Folder: my_code
+## Our Work
+- This is a repo for reproducing day and night shift comparison using TILES data-set
+- Folder: my_code
+- We have submitted to [IUI 2023 Open Science track](https://iui.acm.org/2023/call_for_open_science.html)
 
 ## Original author's
-Folders: code and r_code_analysis
-Paper [A multimodal analysis of physical activity, sleep, and work shift in nurses with wearable sensor data](https://www.nature.com/articles/s41598-021-87029-w?proof=t%25C2%25A0)
+- Folders: code and r_code_analysis
+- Paper [A multimodal analysis of physical activity, sleep, and work shift in nurses with wearable sensor data](https://www.nature.com/articles/s41598-021-87029-w?proof=t%25C2%25A0)
   
 ```
 @article{feng2021multimodal,
