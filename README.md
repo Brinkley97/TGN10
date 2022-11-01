@@ -4,7 +4,6 @@ GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
 ## Our Work
 - This is a repo for reproducing day and night shift comparison using TILES data-set
 - Folder: my_code
-- We have submitted to [IUI 2023 Open Science track](https://iui.acm.org/2023/call_for_open_science.html)
 
 ## Original author's
 - Folders: code and r_code_analysis
