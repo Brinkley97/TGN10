@@ -1,8 +1,12 @@
-# tiles-day-night
-## This is a repo for day and night shift comparison using TILES data-set
-The results of the work can be found in the paper [A multimodal analysis of physical activity, sleep, and work shift in nurses with wearable sensor data](https://www.nature.com/articles/s41598-021-87029-w?proof=t%25C2%25A0)
+# TGN10+ (GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
 
+## This is a repo for reproducing day and night shift comparison using TILES data-set
+Folder: my_code
 
+## Original author's
+Folders: code and r_code_analysis
+Paper [A multimodal analysis of physical activity, sleep, and work shift in nurses with wearable sensor data](https://www.nature.com/articles/s41598-021-87029-w?proof=t%25C2%25A0)
+  
 ```
 @article{feng2021multimodal,
   title={A multimodal analysis of physical activity, sleep, and work shift in nurses with wearable sensor data},
