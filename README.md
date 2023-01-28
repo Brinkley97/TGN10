@@ -1,11 +1,10 @@
 # TGN10+ 
 GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
 
-[![DOI](https://zenodo.org/badge/587812631.svg)](https://zenodo.org/badge/latestdoi/587812631)
-
 ## Our Work
 - This is a repo for reproducing day and night shift comparison using TILES data-set
 - Folder: my_code
+- Pre-ACM IUI Acceptance is this repo. Please see [![DOI](https://zenodo.org/badge/587812631.svg)](https://zenodo.org/badge/latestdoi/587812631) for Post-ACM IUI Acceptance which links to [TGN10Plus](https://github.com/Brinkley97/TGN10Plus)
 
 ## Original author's
 - Folders: code and r_code_analysis
