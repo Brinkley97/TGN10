@@ -1,6 +1,8 @@
 # TGN10+ 
 GitHub will not allow me to name the repo TGN10+ hence repo name as TGN10.
 
+https://zenodo.org/record/7569260#.Y9VBfOzMIRQ
+
 ## Our Work
 - This is a repo for reproducing day and night shift comparison using TILES data-set
 - Folder: my_code
