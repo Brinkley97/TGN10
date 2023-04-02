@@ -22,9 +22,21 @@ def read_IGTB_Raw(data_directory):
 
 # Load IGTB data
 def read_IGTB(data_directory):
-    IGTB_part1 = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'scored', 'baseline', 'part_one-abs_vocab_gats_audit_psqi_ipaq_iod_ocb_irb_itp_bfi_pan_stai.csv.gz'), index_col=1)
-    IGTB_part2 = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'scored', 'baseline', 'part_two-rand_swls_pss_mpfi_waaq_uwes_pcq_chss.csv.gz'), index_col=1)
+    
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/surveys/scored/baseline/"
+    
+    p1_csv = "part_one-abs_vocab_gats_audit_psqi_ipaq_iod_ocb_irb_itp_bfi_pan_stai.csv.gz"
+    p1_file = base + path_to_file + p1_csv
+    
+    p2_csv = "part_two-rand_swls_pss_mpfi_waaq_uwes_pcq_chss.csv.gz"
+    p2_file = base + path_to_file + p2_csv
+    
+    # IGTB_part1 = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'scored', 'baseline', 'part_one-abs_vocab_gats_audit_psqi_ipaq_iod_ocb_irb_itp_bfi_pan_stai.csv.gz'), index_col=1)
+    # IGTB_part2 = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'scored', 'baseline', 'part_two-rand_swls_pss_mpfi_waaq_uwes_pcq_chss.csv.gz'), index_col=1)
 
+    IGTB_part1 = pd.read_csv(p1_file)
+    IGTB_part2 = pd.read_csv(p2_file, index_col=1)
     IGTB = pd.merge(IGTB_part1, IGTB_part2, left_on='participant_id', right_on='participant_id', how='outer')
 
     return IGTB
@@ -46,13 +58,38 @@ def read_IGTB_sub(data_directory):
 #     igtb_df = igtb_df.append(igtb_night_df)
 #     igtb_df = igtb_df.append(igtb_day_df)
     
-    igtb_df = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'igtb_day_night.csv.gz'), index_col=2)
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/surveys/raw/demographics/"
+    
+    igtb_csv = "igtb_day_night.csv.gz"
+    igtb_csv_file = base + path_to_file + igtb_csv
+    
+    # igtb_df = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'igtb_day_night.csv.gz'), index_col=2)
+    igtb_df = pd.read_csv(igtb_csv_file, index_col=2)
+
     return igtb_df
 
 
 def getParticipantInfo(data_directory, index=1):
-    IDs = pd.read_csv(Path.joinpath(data_directory, 'metadata', 'participant-info', 'mitreids.csv')) # mitreids is from id mapping folder
-    participant_info = pd.read_csv(Path.joinpath(data_directory, 'metadata', 'participant-info', 'participant-info.csv.gz'))
+    print("data_directory:", data_directory)
+    print()
+    
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/metadata/participant-info/"
+    
+    mitreids_file = "mitreids.csv"
+    mitreids_ids = base + path_to_file + mitreids_file
+    
+    part_info_file = "participant-info.csv.gz"
+    part_info = base + path_to_file + part_info_file
+    # IDs = pd.read_csv(Path.joinpath(data_directory, 'metadata', 'participant-info', 'mitreids.csv')) # mitreids is from id mapping folder
+    # IDs = pd.read_csv(Path.joinpath(data_directory, 'metadata', 'participant-info', 'mitreids.csv')) # mitreids is from id mapping folder
+    # participant_info = pd.read_csv(Path.joinpath(data_directory, 'metadata', 'participant-info', 'participant-info.csv.gz'))
+    
+    IDs = pd.read_csv(mitreids_ids) # mitreids is from id mapping folder
+    # IDs = pd.read_csv(Path.joinpath(path_to_file, 'metadata', 'participant-info', 'mitreids.csv')) # mitreids is from id mapping folder
+    participant_info = pd.read_csv(part_info)
+    
     participant_info = participant_info.fillna("")
 
     for index, row in participant_info.iterrows():
@@ -64,7 +101,16 @@ def getParticipantInfo(data_directory, index=1):
 
 # Load DemoGraphic data
 def read_Demographic(data_directory):
-    DemoGraphic = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'part_one-demographics.csv.gz'))
+    
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/surveys/raw/demographics/"
+    
+    demo_csv = "part_one-demographics.csv.gz"
+    demo_file = base + path_to_file + demo_csv
+    
+    # DemoGraphic = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'part_one-demographics.csv.gz'))
+    
+    DemoGraphic = pd.read_csv(demo_file)
     DemoGraphic.index = pd.to_datetime(DemoGraphic.index)
 
     return DemoGraphic
@@ -72,7 +118,15 @@ def read_Demographic(data_directory):
 
 # Load pre study data
 def read_pre_study_info(data_directory):
-    PreStudyInfo = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'part_two-demographics_timings.csv.gz'), index_col=3)
+    
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/surveys/raw/demographics/"
+    
+    demo_csv = "part_two-demographics_timings.csv.gz"
+    prestudy_file = base + path_to_file + demo_csv
+    
+    # PreStudyInfo = pd.read_csv(Path.joinpath(data_directory, 'surveys', 'raw', 'demographics', 'part_two-demographics_timings.csv.gz'), index_col=3)
+    PreStudyInfo = pd.read_csv(prestudy_file, index_col=3)
     PreStudyInfo.index = pd.to_datetime(PreStudyInfo.index)
 
     return PreStudyInfo
@@ -243,9 +297,26 @@ def read_PSQI_Raw(data_directory):
 
 # Load mgt data
 def read_MGT(data_directory):
-    anxiety_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'anxiety.csv.gz'), index_col=3)
-    stress_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'stressd.csv.gz'), index_col=3)
-    pand_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'pand.csv.gz'), index_col=3)
+    
+    base = "/Users/brinkley97/Documents/development/lab-kcad/"
+    path_to_file = "datasets/tiles_dataset/surveys/scored/EMAs/"
+    
+    anxiety_csv = "anxiety.csv.gz"
+    anxiety_csv_file = base + path_to_file + anxiety_csv
+    
+    stressed_csv = "stressd.csv.gz"
+    stressed_csv_file = base + path_to_file + stressed_csv
+    
+    pand_csv = "pand.csv.gz"
+    pand_csv_file = base + path_to_file + pand_csv
+    
+    # anxiety_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'anxiety.csv.gz'), index_col=3)
+    # stress_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'stressd.csv.gz'), index_col=3)
+    # pand_mgt_df = pd.read_csv(os.path.join(data_directory, 'surveys', 'scored', 'EMAs', 'pand.csv.gz'), index_col=3)
+    
+    anxiety_mgt_df = pd.read_csv(anxiety_csv_file, index_col=3)
+    stress_mgt_df = pd.read_csv(stressed_csv_file, index_col=3)
+    pand_mgt_df = pd.read_csv(pand_csv_file, index_col=3)
 
     return anxiety_mgt_df, stress_mgt_df, pand_mgt_df
 

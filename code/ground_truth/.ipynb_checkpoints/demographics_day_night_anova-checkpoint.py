@@ -6,7 +6,7 @@ from statsmodels.formula.api import ols
 import statsmodels.api as sm
 import sys, os
 sys.path.insert(1, '/Users/brinkley97/Documents/development/lab-kcad/tiles-day-night/code/util/')
-from load_data_basic import read_AllBasic, return_nurse_df
+from load_data_basic import read_AllBasic, return_nurse_df, read_IGTB_Raw
 from pathlib import Path
 import pandas as pd
 

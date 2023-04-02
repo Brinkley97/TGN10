@@ -1,14 +1,6 @@
-# from util.load_data_basic import *
+from util.load_data_basic import *
 from scipy import stats
 from scipy.stats import skew
-from pingouin import ancova
-import statsmodels.api as sm
-
-import sys, os
-sys.path.insert(1, '/Users/brinkley97/Documents/development/lab-kcad/tiles-day-night/code/util/')
-from load_data_basic import read_AllBasic, return_nurse_df
-from pathlib import Path
-import pandas as pd
 
 
 col_dict = {'stai': 'Anxiety', 'pan_PosAffect': 'Positive Affect', 'pan_NegAffect': 'Negative Affect',
@@ -101,53 +93,17 @@ def print_latex(igtb_df, col, func=stats.kruskal, func_name='K-S', end_str='\\ru
     # print('\multicolumn{1}{c}{$%.1f$} %s' % (u_stats, end_str))
     print('\multicolumn{1}{c}{$%.2f$} %s' % (z, end_str))
     print()
-    
-
-def ancova_test(igtb_df, col):
-    result = ancova(data=igtb_df, dv=col, covar=['age', 'education', 'gender'], between='shift')
-    print()
-
-def multiple_regression(igtb_df, col):
-    data_df = igtb_df[[col]+['Age', 'Educ', 'Gender', 'shift', 'native_lang']]
-    data_df = data_df.dropna()
-
-    data_df['Age'] = pd.get_dummies(data_df['Age'], drop_first=True)
-    data_df['Educ'] = pd.get_dummies(data_df['Educ'], drop_first=True)
-    data_df['Gender'] = pd.get_dummies(data_df['Gender'], drop_first=True)
-    data_df['shift'] = pd.get_dummies(data_df['shift'], drop_first=True)
-    data_df['native_lang'] = pd.get_dummies(data_df['native_lang'], drop_first=True)
-
-    print(col)
-    X = data_df[['Age', 'Educ', 'Gender', 'shift', 'native_lang']]
-    X = sm.add_constant(X)
-
-    Y = data_df[col]
-    model = sm.OLS(Y, X).fit()
-    print(model.summary())
-
-    print()
 
 
 if __name__ == '__main__':
     # Read ground truth data
-    # bucket_str = 'tiles-phase1-opendataset'
-    # root_data_path = Path('/Volumes/Tiles/').joinpath(bucket_str)
+    bucket_str = 'tiles-phase1-opendataset'
+    root_data_path = Path('/Volumes/Tiles/').joinpath(bucket_str)
 
-    # please contact the author to access: igtb_day_night.csv.gz
-    # if Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz').exists() == False:
-    #     igtb_df = read_AllBasic(root_data_path)
-    #     igtb_df.to_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'))
-    # igtb_df = pd.read_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'), index_col=0)
+    igtb_df = read_AllBasic(root_data_path)
+    psqi_raw_igtb = read_PSQI_Raw(root_data_path)
+    igtb_raw = read_IGTB_Raw(root_data_path)
 
-    base = "/Users/brinkley97/Documents/development/lab-kcad/"
-    path_to_file = "datasets/tiles_dataset/figure_1/"
-    name_of_file = "igtb_day_night.csv.gz"
-    igtb_day_night_file = base + path_to_file + name_of_file
-    
-    # igtb_day_night_file = 'igtb_day_night.csv.gz'
-    igtb_df = pd.read_csv(igtb_day_night_file, index_col=0)
-    
-    
     for participant_id in list(igtb_df.participant_id):
         nurse = str(igtb_df.loc[igtb_df['participant_id'] == participant_id].currentposition[0])
         shift = igtb_df.loc[igtb_df['participant_id'] == participant_id].Shift[0]
@@ -155,39 +111,57 @@ if __name__ == '__main__':
         shift_str = 'day' if shift == 'Day shift' else 'night'
         uid = list(igtb_df.loc[igtb_df['participant_id'] == participant_id].index)[0]
 
-        gender = igtb_df.loc[igtb_df['participant_id'] == participant_id].gender[0]
-        age = igtb_df.loc[igtb_df['participant_id'] == participant_id].age[0]
-        educ = igtb_df.loc[igtb_df['participant_id'] == participant_id].educ[0]
-        lang = igtb_df.loc[igtb_df['participant_id'] == participant_id].lang[0]
-
-        gender_str = 'Male' if gender == 1 else 'Female'
-        lang_str = 'Yes' if lang == 1 else 'No'
-
-        if age < 40:
-            igtb_df.loc[uid, 'Age'] = '< 40 Years'
-        else:
-            igtb_df.loc[uid, 'Age'] = '>= 40 Years'
-        igtb_df.loc[uid, 'Age'] = age
-
-        if educ == 'A' or educ == 'B':
-            igtb_df.loc[uid, 'Educ'] = 'Some college or College'
-        elif educ == 'C':
-            igtb_df.loc[uid, 'Educ'] = 'Graduate'
-
         igtb_df.loc[uid, 'job'] = job_str
         igtb_df.loc[uid, 'shift'] = shift_str
-        igtb_df.loc[uid, 'Gender'] = gender_str
-        igtb_df.loc[uid, 'native_lang'] = lang_str
 
+        # Process physical activity survey
+        sitting_on_weekdays = int(igtb_raw.loc[uid, 'ipaq26'])
+        if sitting_on_weekdays < 10 or sitting_on_weekdays == 999:
+            sitting_on_weekdays = np.nan
 
-    igtb_df = igtb_df.loc[igtb_df['job'] == 'nurse']
-    psqi_col = ['psqi']
+        sitting_on_weekend = int(igtb_raw.loc[uid, 'ipaq27'])
+        if sitting_on_weekend < 10 or sitting_on_weekend == 999:
+            sitting_on_weekend = np.nan
+
+        walk_during_work = str(igtb_raw.loc[uid, 'ipaq7'])
+        if walk_during_work == 'nan':
+            walk_during_work = 0
+        if int(walk_during_work) < 10 or int(walk_during_work) == 999:
+            walk_during_work = np.nan
+
+        walk_during_off = str(igtb_raw.loc[uid, 'ipaq21'])
+        if walk_during_off == 'nan':
+            walk_during_off = 0
+        if int(walk_during_off) < 10 or int(walk_during_off) == 999:
+            walk_during_off = np.nan
+
+        igtb_df.loc[uid, 'sitting_weekday'] = sitting_on_weekdays
+        igtb_df.loc[uid, 'sitting_weekend'] = sitting_on_weekend
+        igtb_df.loc[uid, 'walk_during_work'] = float(walk_during_work)
+        igtb_df.loc[uid, 'walk_during_off'] = float(walk_during_off)
+
+        for col in list(psqi_raw_igtb.columns):
+            igtb_df.loc[uid, col] = psqi_raw_igtb.loc[uid, col]
+
+    psqi_col = ['sitting_weekday', 'sitting_weekend', 'walk_during_work', 'walk_during_off', 'psqi']
+    psqi_col = psqi_col + list(psqi_raw_igtb.columns)
+
+    raw_sum = igtb_df[list(psqi_raw_igtb.columns)].sum(axis=1)
+    raw_psqi = igtb_df['psqi']
+
+    # for col in psqi_col:
+        # print_stats(igtb_df, col, func=stats.mannwhitneyu)
+    #    print_latex(igtb_df, col, func=stats.mannwhitneyu)
 
     affect_cols = ['stai', 'pan_PosAffect', 'pan_NegAffect',
                    'rand_GeneralHealth', 'rand_EnergyFatigue', 'swls', 'pss', 'waaq', 'uwes',
                    'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness']
 
+    # for col in affect_cols:
+    #    print_stats(igtb_df, col, func=stats.mannwhitneyu)
+
     # for col in psqi_col:
     for col in affect_cols:
-        multiple_regression(igtb_df, col)
+        print_latex(igtb_df, col, func=stats.mannwhitneyu)
+
     print()
