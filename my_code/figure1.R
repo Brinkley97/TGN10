@@ -1,28 +1,7 @@
 library(lme4)
-# library(readr)
-# library(afex)
-# library(nlme)
 library(emmeans)
-# library(psycho)
-# library(tidyverse)
-# library(easystats)
 library(report)
 library(DescTools)
-
-
-# diurnal_rest_work = function(df_work) {
-#     df_work$time <- factor(df_work$time)
-#     df_work$shift <- factor(df_work$shift)
-#     df_work$id <- factor(df_work$id)
-#     # print(df_work)
-    
-#     rest_work_model <- ezANOVA(data=df_work, dv=rest, wid=.(id), within=.(time), between=.(shift), type=3)
-#     posthoc = PostHocTest(aov(rest ~ shift*time, data=df_work), method = "lsd")
-# }
-
-# read data
-# df <- read_csv("../code/ground_truth/mgt_lm.csv.gz") 
-
 
 # ------------------------------------------
 # model for anxieity
@@ -132,7 +111,7 @@ pa_model = function(df, ema_value){
 # # ------------------------------------------
 # # model for negative affect
 # # ------------------------------------------
-na_model = function(df, ema_value){
+na_model = function(df){
 
     model = lmer(pand_NegAffect ~ work*shift + (1 | id), data = df)
     em <- emmeans(model, pairwise ~ work*shift)
