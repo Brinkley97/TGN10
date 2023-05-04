@@ -6,7 +6,7 @@ sys.path.insert(1, '/Users/brinkley97/Documents/development/lab-kcad/tiles-day-n
 from load_data_basic import read_AllBasic, return_nurse_df
 from pathlib import Path
 import pandas as pd
-
+pd.options.mode.chained_assignment = None
 
 def mr_reg(nurse_df, feat_cols):
     # igtb_cols = ['psqi', 'ipaq', 'ocb', 'irb', 'itp',
@@ -15,10 +15,19 @@ def mr_reg(nurse_df, feat_cols):
     igtb_cols = ['psqi', 'ipaq', 'ocb', 'irb', 'itp', 'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness', 'pan_PosAffect', 'pan_NegAffect', 'stai']
 
     result_df = pd.DataFrame()
-    nurse_df = nurse_df[igtb_cols+feat_cols]
+    
+    print()
+    print('Nurse DF Columns')
+    print(nurse_df.columns)
+    additional_cols = igtb_cols+feat_cols
+    print(additional_cols)
+    
+    # nurse_df = nurse_df[igtb_cols+feat_cols]
+    nurse_df = nurse_df[igtb_cols]
+    
     nurse_df = nurse_df.dropna()
     for col in igtb_cols:
-        mr_df = nurse_df[[col] + feat_cols].dropna()
+        mr_df = nurse_df[[col]].dropna()
         y = mr_df[col]
         x = mr_df[feat_cols]
         x = pd.DataFrame(x, dtype=float)
@@ -131,6 +140,11 @@ if __name__ == '__main__':
     #     igtb_df.to_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'))
     # igtb_df = pd.read_csv(Path(os.path.realpath(__file__)).parents[1].joinpath('igtb_day_night.csv.gz'), index_col=0)
     igtb_df = pd.read_csv(file, index_col=0)
+    
+#     print()
+#     print('Nurse DF Columns')
+#     print(igtb_df.columns)
+    
 
     # sleep_stats_df = pd.read_csv(Path(__file__).parent.absolute().parents[0].joinpath('sleep', 'sleep.csv.gz'), index_col=0)
     path_to_sleep = "datasets/tiles_dataset/table_3/sleep/"
@@ -154,6 +168,10 @@ if __name__ == '__main__':
     fitbit_df = fitbit_df.loc[fitbit_df['work'] == 0.5]
 
     nurse_df = return_nurse_df(igtb_df)
+    # print()
+    # print('Nurse DF Columns')
+    # print(nurse_df.columns)
+    
     for participant_id in list(nurse_df.participant_id):
         nurse = str(nurse_df.loc[nurse_df['participant_id'] == participant_id].currentposition[0])
         shift = nurse_df.loc[nurse_df['participant_id'] == participant_id].Shift[0]
@@ -192,7 +210,7 @@ if __name__ == '__main__':
             nurse_df.loc[uid, 'step_diff'] = fitbit_df.loc[participant_id, 'step_diff']
 
         if participant_id in list(sleep_stats_df.index):
-            nurse_df.loc[uid, 'duration'] = sleep_stats_df.loc[participant_id, 'duration']
+            nurse_df.loc[uid, 'duration'] = sleep_stats_df.loc[participant_id, 'duration']            
             nurse_df.loc[uid, 'duration_work'] = sleep_work_df.loc[participant_id, 'duration']
             nurse_df.loc[uid, 'duration_off'] = sleep_off_df.loc[participant_id, 'duration']
 
@@ -212,52 +230,51 @@ if __name__ == '__main__':
         
         # for col in list(psqi_raw_igtb.columns):
         #     nurse_df.loc[uid, col] = psqi_raw_igtb.loc[uid, col]
-    print(nurse_df.columns)
-    # nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp',
-    #                      'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness',
-    #                      'pan_PosAffect', 'pan_NegAffect', 'stai',
-    #                      'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step',
-    #                      'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
-    #                      'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off',
-    #                      'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff',
-    #                      'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std',
-    #                      'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off',
-    #                      'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']+list(psqi_raw_igtb.columns)]
+    # print()
+    # print('Nurse DF Columns')
+    # print(nurse_df.columns)
+#     nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp',
+#                          'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness',
+#                          'pan_PosAffect', 'pan_NegAffect', 'stai',
+#                          'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step',
+#                          'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
+#                          'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off',
+#                          'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff',
+#                          'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std',
+#                          'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off',
+#                          'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']+list(psqi_raw_igtb.columns)]
     
-    nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp',
-                         'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness',
-                         'pan_PosAffect', 'pan_NegAffect', 'stai',
-                         'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step',
-                         'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
-                         'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off',
-                         'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff',
-                         'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std',
-                         'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off',
-                         'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']]
+    
+    # nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp',
+                         # 'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness',
+                         # 'pan_PosAffect', 'pan_NegAffect', 'stai',
+                         # 'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step',
+                         # 'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
+                         # 'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off',
+                         # 'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff',
+                         # 'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std',
+                         # 'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off',
+                         # 'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']]
     
     # nurse_df.reset_index(inplace=True)
     # print(nurse_df)
-#     updated_nurse_df = nurse_df.loc[0:, ['psqi', 'ipaq', 'ocb', 'irb', 'itp', 
-#                                          'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness', 
-#                                          'pan_PosAffect', 'pan_NegAffect', 'stai', 
-#                                          'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step', 'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
-#                                          'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off', 
-#                                          'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff', 
-#                                          'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std', 
-#                                          'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off', 
-#                                          'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']]
-    
-    # print(updated_nurse_df.columns)
-    # updated_nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp', 
+    # updated_nurse_df = nurse_df.loc[0:, ['psqi', 'ipaq', 'ocb', 'irb', 'itp', 
     #                                      'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness', 
-    #                                      'pan_PosAffect', 'pan_NegAffect', 'stai',
-    #                                      'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step', 'rest_work', 
-    #                                      'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
+    #                                      'pan_PosAffect', 'pan_NegAffect', 'stai', 
+    #                                      'shift', 'rest', 'moderate', 'vigorous', 'intense', 'step', 'rest_work', 'moderate_work', 'vigorous_work', 'intense_work', 'step_work',
     #                                      'rest_off', 'moderate_off', 'vigorous_off', 'intense_off', 'step_off', 
     #                                      'rest_diff', 'moderate_diff', 'vigorous_diff', 'intense_diff', 'step_diff', 
     #                                      'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std', 
     #                                      'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off', 
     #                                      'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']]
+    
+    # print(updated_nurse_df.columns)
+    updated_nurse_df = nurse_df[['psqi', 'ipaq', 'ocb', 'irb', 'itp', 
+                                         'bfi_Neuroticism', 'bfi_Conscientiousness', 'bfi_Extraversion', 'bfi_Agreeableness', 'bfi_Openness', 
+                                         'pan_PosAffect', 'pan_NegAffect', 'stai',
+                                         'shift', 'duration', 'duration_work', 'duration_off', 'total_seconds', 'mid_std', 
+                                         'minutesAsleep', 'minutesAsleep_work', 'minutesAsleep_off', 
+                                         'efficiency', 'efficiency_work', 'efficiency_off', 'mid', 'duration_diff']]
     
     # updated_nurse_df = nurse_df.loc[0:, ['psqi', 'ipaq']]
 
@@ -271,31 +288,31 @@ if __name__ == '__main__':
     day_physical_df = mr_reg(day_df, physical_feat_cols)
     night_physical_df = mr_reg(night_df, physical_feat_cols)
 
-    day_physical_df.to_csv('day_physical_mr.csv.gz')
-    night_physical_df.to_csv('night_physical_mr.csv.gz')
+#     day_physical_df.to_csv('day_physical_mr.csv.gz')
+#     night_physical_df.to_csv('night_physical_mr.csv.gz')
 
-    print('------------day physical mr-------------------')
-    print_latex(day_physical_df, physical_feat_cols)
-    print('------------------------------------------------')
+#     print('------------day physical mr-------------------')
+#     print_latex(day_physical_df, physical_feat_cols)
+#     print('------------------------------------------------')
 
-    print('------------night physical mr-------------------')
-    print_latex(night_physical_df, physical_feat_cols)
-    print('------------------------------------------------')
+#     print('------------night physical mr-------------------')
+#     print_latex(night_physical_df, physical_feat_cols)
+#     print('------------------------------------------------')
 
-    # Sleep
-    sleep_feat_cols = ['duration_work', 'duration_off', 'minutesAsleep', 'mid']
+#     # Sleep
+#     sleep_feat_cols = ['duration_work', 'duration_off', 'minutesAsleep', 'mid']
 
-    day_sleep_df = mr_reg(day_df, sleep_feat_cols)
-    night_sleep_df = mr_reg(night_df, sleep_feat_cols)
+#     day_sleep_df = mr_reg(day_df, sleep_feat_cols)
+#     night_sleep_df = mr_reg(night_df, sleep_feat_cols)
 
-    day_sleep_df.to_csv('day_sleep_mr.csv.gz')
-    night_sleep_df.to_csv('night_sleep_mr.csv.gz')
+#     day_sleep_df.to_csv('day_sleep_mr.csv.gz')
+#     night_sleep_df.to_csv('night_sleep_mr.csv.gz')
 
-    print('------------day sleep mr-------------------')
-    print_latex(day_sleep_df, sleep_feat_cols)
-    print('------------------------------------------------')
+#     print('------------day sleep mr-------------------')
+#     print_latex(day_sleep_df, sleep_feat_cols)
+#     print('------------------------------------------------')
 
-    print('------------night sleep mr-------------------')
-    print_latex(night_sleep_df, sleep_feat_cols)
-    print('------------------------------------------------')
+#     print('------------night sleep mr-------------------')
+#     print_latex(night_sleep_df, sleep_feat_cols)
+#     print('------------------------------------------------')
 

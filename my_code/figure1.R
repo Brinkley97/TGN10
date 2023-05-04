@@ -6,7 +6,7 @@ library(DescTools)
 # ------------------------------------------
 # model for anxieity
 # ------------------------------------------
-anxiety_model = function(df, ema_value){
+anxiety_model = function(df){
 
     model = lmer(anxiety ~ work + shift + shift : work  + (1 | id), data = df)
     em <- emmeans(model, "work")
@@ -40,7 +40,7 @@ anxiety_model = function(df, ema_value){
 # ------------------------------------------
 # model for stress
 # ------------------------------------------
-stress_model = function(df, ema_value){
+stress_model = function(df){
 # model = lmer(stressd ~ work + shift + shift : work  + (1 | id), data = df)
     model = lmer(stressd ~ work * shift  + (1 | id), data = df)
     em <- emmeans(model, "work")
@@ -77,7 +77,7 @@ stress_model = function(df, ema_value){
 # # ------------------------------------------
 # # model for pos affect
 # # ------------------------------------------
-pa_model = function(df, ema_value){
+pa_model = function(df){
 
     model = lmer(pand_PosAffect ~ work*shift  + (1 | id), data = df)
     em <- emmeans(model, "work")

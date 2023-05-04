@@ -12,7 +12,8 @@ require(lmerTest)
 library(DescTools)
 
 # read data
-df_igtb <- read_csv("../code/ground_truth/igtb.csv.gz") 
+df_igtb <- read_csv("/Users/brinkley97/Documents/development/lab-kcad/tiles-day-night/code/igtb.csv.gz") 
+
 
 # ------------------------------------------
 # model for shift*age
@@ -23,10 +24,10 @@ model <- aov(bfi_Neuroticism ~ Shift * Age, data = df_igtb)
 # em <- emmeans(model, pairwise ~ Shift * Age)
 posthoc = PostHocTest(aov(bfi_Neuroticism ~ Shift * Age, data=df_igtb), method = "lsd")
 
-sink("igtb/neurotism_shift.txt", append=FALSE)
+# sink("igtb/neurotism_shift.txt", append=FALSE)
 print(summary(model))
 print(posthoc)
 # print(summary(em))
 print(report(model))
-sink()
+# sink()
 

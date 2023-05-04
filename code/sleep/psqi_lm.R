@@ -20,13 +20,17 @@ library(varhandle)
 emm_options(opt.digits = FALSE)
 
 # read data
-df <- read_csv("../code/sleep/sleep.csv.gz")
+
+# df <- read_csv("../code/sleep/sleep.csv.gz")
+df <- read_csv("/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/table_3/sleep/sleep.csv.gz")
 df_work <- subset(df,df$work=='workday')
 df_off <- subset(df,df$work=='offday')
 df_all <- subset(df,df$work=='all')
 
-df_work <- read_csv("../code/physical/stats_work_lm.csv.gz")
-df_off <- read_csv("../code/physical/stats_off_lm.csv.gz")
+# df_work <- read_csv("../code/physical/stats_work_lm.csv.gz")
+# df_off <- read_csv("../code/physical/stats_off_lm.csv.gz")
+df_work <- read_csv("/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/table_3/physical/stats_work_lm.csv.gz") 
+df_off <- read_csv("/Users/brinkley97/Documents/development/lab-kcad/datasets/tiles_dataset/table_3/physical/stats_off_lm.csv.gz") 
 
 df_off$step_ratio <- df_off$step_ratio * 100
 df_off$rest <- df_off$rest * 100

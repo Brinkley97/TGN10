@@ -9,6 +9,12 @@ from load_data_basic import read_AllBasic, return_nurse_df
 from pathlib import Path
 import pandas as pd
 
+pd.options.mode.chained_assignment = None
+
+
+# 'Shift [day shift] x rest-activity ratio (off-day)', ],
+#     'table_5_sleep': [s],
+
 col_dict = {'rest_work': 'Rest Activity (workday)',
             'rest_off': 'Rest Activity (off-day)',
             'step_ratio_work': 'Walk Activity (workday)',
@@ -52,6 +58,8 @@ print_dict = {'r2': 'Adjust $R^2$',
               #'night*rest_off': 'Shift [Night shift] $\\times$ Rest Activity \% (Off-day)'}
 
 def mr_reg(nurse_df, igtb_col, index, feat_col):
+    
+    # print(nurse_df)
 
     # for col in feat_cols:
     data_df = nurse_df[[feat_col, 'less_than_40', 'female', 'day', 'night']+[igtb_col]]
@@ -59,12 +67,14 @@ def mr_reg(nurse_df, igtb_col, index, feat_col):
     # data_df = (data_df - data_df.mean()) / data_df.std()
     tmp_df = (data_df[[igtb_col, feat_col]] - data_df[[igtb_col, feat_col]].mean()) / data_df[[igtb_col, feat_col]].std()
     data_df.loc[list(tmp_df.index), [igtb_col, feat_col]] = tmp_df.loc[list(tmp_df.index), [igtb_col, feat_col]]
+    # print(feat_col)
     # print(data_df)
     
-    # save_data_df
-    compression_opts = dict(method='zip', archive_name='datadf.csv')  
-    path_to_csv = base + path_to_file + 'datadf.zip' 
-    data_df.to_csv(path_to_csv, index=False, compression=compression_opts)
+    
+#     # save_data_df
+#     compression_opts = dict(method='zip', archive_name='efficiency_off.csv')  
+#     path_to_csv = base + path_to_file + 'efficiency_off.zip' 
+#     data_df.to_csv(path_to_csv, index=False, compression=compression_opts)
     
     
     model = ols(igtb_col + ' ~ less_than_40 + female + day + ' + feat_col + ' + day : ' + feat_col, data=data_df).fit()
@@ -110,7 +120,8 @@ def mr_reg(nurse_df, igtb_col, index, feat_col):
             param_idx = 4
         elif index == 'night*'+feat_col:
             param_idx = 5
-
+        
+        print(param_idx)
         if model.pvalues[param_idx+1] < 0.01:
             print('%.2f\\textsuperscript{**} %s' % (model.params[param_idx+1], end_str))
         elif model.pvalues[param_idx+1] < 0.05:
@@ -138,9 +149,9 @@ if __name__ == '__main__':
     save_igtb_df = pd.read_csv(file, index_col=0)
     
     # igtb_df
-    compression_opts = dict(method='zip', archive_name='igtb.csv')  
-    path_to_igtb_csv = base + path_to_file + 'igtb.zip' 
-    save_igtb_df.to_csv(path_to_igtb_csv, index=False, compression=compression_opts)
+    # compression_opts = dict(method='zip', archive_name='igtb.csv')  
+    # path_to_igtb_csv = base + path_to_file + 'igtb.zip' 
+    # save_igtb_df.to_csv(path_to_igtb_csv, index=False, compression=compression_opts)
 
 #     sleep_stats_df = pd.read_csv(Path(__file__).parent.absolute().parents[0].joinpath('sleep', 'sleep.csv.gz'), index_col=0)
 #     sleep_work_df = sleep_stats_df.loc[sleep_stats_df['work'] == 'workday']
@@ -163,14 +174,7 @@ if __name__ == '__main__':
     fitbit_work_df = pd.read_csv(fitbit_work, index_col=7)
     fitbit_off_df = pd.read_csv(fitbit_off, index_col=7)
     
-    
-    # nurse_df = return_nurse_df(save_igtb_df)
-#     nurse_df = return_nurse_df(igtb_df)
-#     compression_opts = dict(method='zip', archive_name='nurse_df.csv')  
-#     path_to_csv = base + path_to_file + 'nurse_df.zip' 
-#     nurse_df.to_csv(path_to_csv, index=False, compression=compression_opts)
-    
-    
+    nurse_df = return_nurse_df(save_igtb_df)
     
     for participant_id in list(nurse_df.participant_id):
         nurse = str(nurse_df.loc[nurse_df['participant_id'] == participant_id].currentposition[0])
@@ -211,11 +215,6 @@ if __name__ == '__main__':
                          'rest_off', 'vigorous_min_off', 'step_ratio_off',
                          'duration_work', 'duration_off', 'efficiency_work', 'efficiency_off']]
 
-#     # save_nurse_df
-#     compression_opts = dict(method='zip', archive_name='nursedf.csv')  
-#     path_to_csv = base + path_to_file + 'nursedf.zip' 
-#     nurse_df.to_csv(path_to_csv, index=False, compression=compression_opts)
-    
     tmp_df = pd.get_dummies(nurse_df['shift'])
     for index in list(tmp_df.index):
         nurse_df.loc[index, 'day'] = tmp_df.loc[index, 'Day shift']
@@ -230,15 +229,27 @@ if __name__ == '__main__':
     for index in list(tmp_df.index):
         nurse_df.loc[index, 'female'] = tmp_df.loc[index, 'Female']
         # nurse_df.loc[index, 'female'] = tmp_df.loc[index, 'Male']
+
+    # table 3 1st half
+    # feat_col = 'rest_off'
+    
+    # table 3 2nd half
+    feat_col = 'step_ratio_off'
+    
+    # table 5 1st half
+    # feat_col = 'duration_off'
+    
+    # table 5 2nd half
+    # feat_col = 'efficiency_off'
+    # print(nurse_df)
+    
+    # save_data_df
+#     compression_opts = dict(method='zip', archive_name='nurse_step_sleep.csv')  
+#     path_to_csv = base + path_to_file + 'nurse_step_sleep.zip' 
+#     nurse_df.to_csv(path_to_csv, compression=compression_opts)
     
     
-    # save_nurse_df
-#     compression_opts = dict(method='zip', archive_name='nurse_df.csv')  
-#     path_to_csv = base + path_to_file + 'nurse_df.zip' 
-#     nurse_df.to_csv(path_to_csv, index=False, compression=compression_opts)
     
-    
-    feat_col = 'efficiency_work'
     for print_index in ['intercept', 'age', 'gender', 'day', feat_col, 'day*' + feat_col, 'observation', 'r2']:
         if print_index == 'observation':
             print('\\midrule')
@@ -247,3 +258,97 @@ if __name__ == '__main__':
             mr_reg(nurse_df, col, print_index, feat_col=feat_col)
         print()
     print()
+    
+    
+    # nurse_df = return_nurse_df(save_igtb_df)
+#     nurse_df = return_nurse_df(igtb_df)
+#     compression_opts = dict(method='zip', archive_name='nurse_df.csv')  
+#     path_to_csv = base + path_to_file + 'nurse_df.zip' 
+#     nurse_df.to_csv(path_to_csv, index=False, compression=compression_opts)
+    
+    
+    
+#     for participant_id in list(nurse_df.participant_id):
+#         nurse = str(nurse_df.loc[nurse_df['participant_id'] == participant_id].currentposition[0])
+#         shift = nurse_df.loc[nurse_df['participant_id'] == participant_id].Shift[0]
+#         job_str = 'nurse' if nurse == 'A' else 'non_nurse'
+
+#         uid = list(nurse_df.loc[nurse_df['participant_id'] == participant_id].index)[0]
+#         gender = nurse_df.loc[nurse_df['participant_id'] == participant_id].gender[0]
+#         age = nurse_df.loc[nurse_df['participant_id'] == participant_id].age[0]
+
+#         gender_str = 'Male' if gender == 1 else 'Female'
+#         age_str = '< 40 Years' if age < 40 else '>= 40 Years'
+#         shift_str = shift
+
+#         nurse_df.loc[uid, 'job'] = job_str
+#         nurse_df.loc[uid, 'shift'] = shift_str
+#         nurse_df.loc[uid, 'gender'] = gender_str
+#         nurse_df.loc[uid, 'age'] = age_str
+
+#         if participant_id in list(fitbit_work_df.index):
+#             nurse_df.loc[uid, 'rest_work'] = fitbit_work_df.loc[participant_id, 'rest']
+#             nurse_df.loc[uid, 'step_ratio_work'] = fitbit_work_df.loc[participant_id, 'step_ratio']
+#             nurse_df.loc[uid, 'vigorous_min_work'] = fitbit_work_df.loc[participant_id, 'vigorous_min']
+#         if participant_id in list(fitbit_off_df.index):
+#             nurse_df.loc[uid, 'rest_off'] = fitbit_off_df.loc[participant_id, 'rest']
+#             nurse_df.loc[uid, 'step_ratio_off'] = fitbit_off_df.loc[participant_id, 'step_ratio']
+#             nurse_df.loc[uid, 'vigorous_min_off'] = fitbit_off_df.loc[participant_id, 'vigorous_min']
+
+#         if participant_id in list(sleep_stats_df.index):
+#             nurse_df.loc[uid, 'duration_work'] = sleep_work_df.loc[participant_id, 'duration']
+#             nurse_df.loc[uid, 'duration_off'] = sleep_off_df.loc[participant_id, 'duration']
+
+#             nurse_df.loc[uid, 'efficiency_work'] = sleep_work_df.loc[participant_id, 'efficiency']
+#             nurse_df.loc[uid, 'efficiency_off'] = sleep_off_df.loc[participant_id, 'efficiency']
+
+#     nurse_df = nurse_df[['psqi', 'swls', 'pan_PosAffect', 'pan_NegAffect', 'stai', 'shift', 'age', 'gender',
+#                          'rest_work', 'vigorous_min_work', 'step_ratio_work',
+#                          'rest_off', 'vigorous_min_off', 'step_ratio_off',
+#                          'duration_work', 'duration_off', 'efficiency_work', 'efficiency_off']]
+    
+#     # save_nurse_df
+#     compression_opts = dict(method='zip', archive_name='final_nurse_df.csv')  
+#     path_to_csv = base + path_to_file + 'final_nurse_df.zip' 
+#     nurse_df.to_csv(path_to_csv, index=False, compression=compression_opts)
+    
+    
+#     tmp_df = pd.get_dummies(nurse_df['shift'])
+#     for index in list(tmp_df.index):
+#         nurse_df.loc[index, 'day'] = tmp_df.loc[index, 'Day shift']
+#         nurse_df.loc[index, 'night'] = tmp_df.loc[index, 'Night shift']
+
+#     tmp_df = pd.get_dummies(nurse_df['age'])
+#     for index in list(tmp_df.index):
+#         # nurse_df.loc[index, 'less_than_40'] = tmp_df.loc[index, '< 40 Years']
+#         nurse_df.loc[index, 'less_than_40'] = tmp_df.loc[index, '>= 40 Years']
+
+#     tmp_df = pd.get_dummies(nurse_df['gender'])
+#     for index in list(tmp_df.index):
+#         nurse_df.loc[index, 'female'] = tmp_df.loc[index, 'Female']
+#         # nurse_df.loc[index, 'female'] = tmp_df.loc[index, 'Male']
+    
+    
+    
+    
+    
+    
+#     # table 3 1st half
+#     # feat_col = 'rest_off'
+    
+#     # table 3 2nd half
+#     # feat_col = 'step_ratio_off'
+    
+#     # feat_col = 'duration_off'
+#     feat_col = 'efficiency_off'
+    
+#     print(nurse_df)
+    
+#     for print_index in ['intercept', 'age', 'gender', 'day', feat_col, 'day*' + feat_col, 'observation', 'r2']:
+#         if print_index == 'observation':
+#             print('\\midrule')
+
+#         for col in ['swls', 'stai', 'psqi', 'pan_PosAffect', 'pan_NegAffect']:
+#             mr_reg(nurse_df, col, print_index, feat_col=feat_col)
+#         print()
+#     print()
